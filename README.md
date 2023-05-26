@@ -13,7 +13,6 @@ tags:
 links:
   - "本文代码": https://github.com/jeremy-feng/dijkstra-algorithm
   - "3 分钟了解 Dijkstra 算法": https://youtu.be/_lHSawdgXpI
-
 ---
 
 # Dijkstra 算法求解最短路径问题
@@ -64,6 +63,18 @@ import time
 2. 输出结果：使用 `NumPy` 中的二维数组存储起始点到各点的距离。
 3. T 集合：本质为 `list` 的二叉堆，使用 Python 内置标准库 `heapq` 实现添加、删除、提取最小元素等操作。
 4. P 集合：Python 内置的 `set` 结构。
+
+### 使用的算法
+
+Dijkstra 算法：
+
+1. 初始化：`i=origin`，`L_i = 0`，`L_j = np.iinfo(np.int32).max`，`t = [(0, i)]`，`t_set = set([i])`，`p = set()`
+
+2. Node selection：从 `t` 中取出最小的元素 `i`，将其从 `t_set` 中移除，并加入到 `p` 中。
+
+3. 算法终止条件：`len(p)=n`
+
+4. 从 network 中取出 `i` 的所有邻接点 `j_s`，取 `L_i+d_ij`和`L_j`中较小的那一个，作为`L_j`的更新值。如果`j`不在`t_set`中，则将其添加到`t_set`。继续执行第 2 步。
 
 ```python
 def solve(args):
