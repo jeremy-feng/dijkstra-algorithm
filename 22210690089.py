@@ -1,25 +1,31 @@
 import heapq
 import numpy as np
-import argparse
 import time
+import sys
 
 
-def solve(args):
+def solve(network_type, network_file, origin_file):
+    """
+    解决 one-to-all 最短路径问题
+
+    Args:
+        network_type: 网络类型，包括：grid, random, dense
+        network_file: 网络文件路径
+        origin_file: 起始点文件路径
+    """
     start_time = time.time()
-    # 网络类型
-    network_type = args.network_type
     # 读取结点数量 n 和边的数量 m
-    with open(args.network_file, "r") as f:
+    with open(network_file, "r") as f:
         n = int(f.readline().split("=")[1].strip())
         m = int(f.readline().split("=")[1].strip())
     # 读取起始点
-    with open(args.origin_file, "r") as f:
+    with open(origin_file, "r") as f:
         # 跳过第一行
         f.readline()
         origin = int(f.readline().strip())
     # 读取网络文件中的 Forward star representation
     network = np.loadtxt(
-        args.network_file,
+        network_file,
         skiprows=3,
         delimiter=",",
         dtype=np.int32,
@@ -76,41 +82,19 @@ def solve(args):
         for j in j_s[is_less]:
             heapq.heappush(t, (output[j - 1, 2], j))
     end_time = time.time()
-    # 将结果导出到 22210690089_output_{args.network_type}.txt
+    # 将结果导出到 output/22210690089_output_{network_type}.txt
     np.savetxt(
-        f"22210690089_output_{args.network_type}.txt",
+        f"output/22210690089_output_{network_type}.txt",
         output,
         fmt="%d",
         delimiter=",",
         header="origin,destination,distance",
         comments="",
     )
-    # 将运行时间导出到 22210690089_time_{args.network_type}.txt
-    with open(f"22210690089_time_{args.network_type}.txt", "w") as f:
+    # 将运行时间导出到 output/22210690089_time_{network_type}.txt
+    with open(f"output/22210690089_time_{network_type}.txt", "w") as f:
         f.write(f"{(end_time - start_time) * 1000:.2f}ms")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("22210690089")
-    parser.add_argument(
-        "network_type",
-        type=str,
-        default="grid",
-        choices=[
-            "grid",
-            "random",
-            "dense",
-        ],
-    )
-    parser.add_argument(
-        "network_file",
-        type=str,
-        default="grid_150_150.txt",
-    )
-    parser.add_argument(
-        "origin_file",
-        type=str,
-        default="origin_grid_150_150.txt",
-    )
-    args = parser.parse_args()
-    solve(args)
+    solve(sys.argv[1], sys.argv[2], sys.argv[3])
